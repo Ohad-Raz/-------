@@ -2,13 +2,24 @@ body {
   display: flex;
   flex-wrap: wrap;
   font-size: 1.5rem;
+  flex-direction: column;
 }
 
 h2{
   color:azure;
-  font-size: 3.6rem;
+  font-size: 3.7rem;
   text-align: center;
   margin-right: 3rem;
+}
+
+h3{
+color: rgb(175, 249, 249);
+  font-size: 1.8rem;
+  background-color: #1e466e84;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 body{
@@ -29,22 +40,55 @@ min-height: 100vh;
 }
 
 
-.events-container {
+.month-container{
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonShowHide{
+  font-weight: 900;
+  height: 4rem;
+  width: 15rem;
+  font-size: 1.5rem;
+  background: linear-gradient(
+    to right,
+    #f4cd41,
+    #f2da61
+  );
+  color: #1E466E;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.events-container {
+ /* Important to override any inline styles */
   flex-wrap: wrap;
   gap: 1rem;
   margin: 2rem;
+  justify-content: space-between;
+  flex-direction: row;
 }
 
 .event-card {
-  width: calc(33.33% - 1rem);
+  width: calc(33% - 1rem); /* Adjust the width to leave space for the gap */
   box-sizing: border-box;
   padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   background-color: rgba(235, 224, 209, 0.805);
+  box-sizing: border-box;
 }
+
 
 @media screen and (max-width: 768px) {
   .event-card {

@@ -25,7 +25,7 @@ async function fetchHebcalConverterAPI(date) {
 }
 
 // Function to render monthly events in a card
-async function renderMonthlyEvents(year, month, events) {
+function renderMonthlyEvents(year, month, events) {
   const monthContainer = document.createElement("div");
   monthContainer.className = "month-container";
 
@@ -34,78 +34,62 @@ async function renderMonthlyEvents(year, month, events) {
   headerElement.textContent = `חודש: ${month} - שנה: ${year}`;
   monthContainer.appendChild(headerElement);
 
-  // Render toggle button
-  const toggleButton = document.createElement("button");
- toggleButton.className = "buttonShowHide";
-  toggleButton.textContent = "הצג/הסתר חודש";
-  monthContainer.appendChild(toggleButton);
-
-  // Group events by date
-  const eventsMap = new Map();
-
-  for (const event of events) {
-    const formattedDate = event.date.split("T")[0];
-    if (!eventsMap.has(formattedDate)) {
-      eventsMap.set(formattedDate, [event]);
-    } else {
-      eventsMap.get(formattedDate).push(event);
-    }
-  }
-
   // Render daily events
   const eventsContainer = document.createElement("div");
   eventsContainer.className = "events-container";
 
-  for (const [date, eventGroup] of eventsMap) {
+  events.forEach(async (event) => {
     const eventElement = document.createElement("div");
     eventElement.className = "event-card";
 
-    // Fetch Hebcal Converter API for the first event date in the group
-    const converterData = await fetchHebcalConverterAPI(date);
+    // Fetch Hebcal Converter API for each event date
+    const converterData = await fetchHebcalConverterAPI(event.date);
 
-    eventElement.innerHTML = `
-      <h3>${converterData.gd}/${converterData.gm}/${converterData.gy}</h3>
-      <p>התאריך העברי : ${converterData.hebrew}</p>
-      <p>שנה עברית: ${converterData.hy}</p>
-      <hr>
-      ${eventGroup.map((event) => `<p>${event.title}</p>`).join("<hr>")}
-      <hr>
-    `;
+    eventElement.innerHTML = `   
+        <h3>${converterData.gd}/${converterData.gm}/${converterData.gy}</h3>
+              <p>התאריך העברי : ${converterData.hebrew}</p>
+              <hr>
+            <p> ${event.title.join("<br>")}</p>
+          
+            <hr>
+        `;
     eventsContainer.appendChild(eventElement);
-  }
+  });
 
   // Initially hide the events container
   eventsContainer.style.display = "none";
 
-  // Add click event listener to toggle button
+  // Toggle button to show/hide events
+  const toggleButton = document.createElement("button");
+  toggleButton.textContent = "הצג/הסתר אירועים";
   toggleButton.addEventListener("click", () => {
     if (eventsContainer.style.display === "none") {
-      eventsContainer.style.display = "flex";
+      eventsContainer.style.display = "block";
     } else {
       eventsContainer.style.display = "none";
     }
   });
 
+  monthContainer.appendChild(toggleButton);
   monthContainer.appendChild(eventsContainer);
   document.body.appendChild(monthContainer);
 }
 
-// Loop through each day from January 1, 2024, to January 1, 2026
+// Loop through each month from January 2024 to December 2030
 const startDate = new Date(2024, 0, 1); // January is 0-based
-const endDate = new Date(2032, 0, 1);
+const endDate = new Date(2030, 11, 1); // December is 11-based
 
 async function fetchData() {
   let currentDate = startDate;
   while (currentDate < endDate) {
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // Months are 1-based
+    const month = currentDate.getMonth() + 1; // Adding 1 to get month in the range 1-12
     const events = await fetchHebcalAPI(year, month);
-    await renderMonthlyEvents(year, month, events);
-    currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
+    renderMonthlyEvents(year, month, events);
+
+    currentDate.setMonth(currentDate.getMonth() + 1);
   }
 }
 
-// Call the fetchData function after the DOM has loaded
-document.addEventListener("DOMContentLoaded", () => {
-  fetchData();
-});
+// Call the fetchData function
+fetchData();
